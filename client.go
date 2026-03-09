@@ -142,7 +142,6 @@ func (c *Client) request(method string, url string,
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		defer res.Body.Close()
 		coinbaseError := Error{}
 		decoder := json.NewDecoder(res.Body)
 		if err := decoder.Decode(&coinbaseError); err != nil {
