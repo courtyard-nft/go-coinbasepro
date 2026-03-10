@@ -80,11 +80,15 @@ func (c *Client) Request(method string, url string,
 		time.Sleep(retryDuration)
 
 		res, err = c.request(method, url, params, result)
-		if res != nil && res.StatusCode == 429 {
+		// Retry on rate limiting (429), server errors (5xx), and network errors
+		if err != nil && res == nil {
+			// Network error (no response received) — retry
 			continue
-		} else {
-			break
 		}
+		if res != nil && (res.StatusCode == 429 || res.StatusCode >= 500) {
+			continue
+		}
+		break
 	}
 
 	return res, err
