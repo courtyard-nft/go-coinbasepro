@@ -3,7 +3,6 @@ package coinbasepro
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -18,7 +17,9 @@ func (s *StringNumber) UnmarshalJSON(data []byte) error {
 
 	switch v := v.(type) {
 	case float64:
-		*s = StringNumber(fmt.Sprintf("%f", v))
+		// Preserve the full precision of the JSON number instead of the
+		// six decimal places imposed by fmt.Sprintf("%f").
+		*s = StringNumber(strconv.FormatFloat(v, 'f', -1, 64))
 	case int:
 		*s = StringNumber(strconv.Itoa(v))
 	case string:

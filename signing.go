@@ -31,11 +31,13 @@ func (m Message) Sign(secret, key, passphrase string) (SignedMessage, error) {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 	sig, err := generateSig(fmt.Sprintf("%s%s%s", timestamp, method, url), secret)
 
+	// The signed message must carry the exact same timestamp that was used to
+	// generate the signature, otherwise Coinbase Pro rejects the authentication.
 	return SignedMessage{
 		Message:    m,
 		Key:        key,
 		Passphrase: passphrase,
-		Timestamp:  strconv.FormatInt(time.Now().Unix(), 10),
+		Timestamp:  timestamp,
 		Signature:  sig,
 	}, err
 }

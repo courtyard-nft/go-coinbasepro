@@ -2,6 +2,7 @@ package coinbasepro
 
 import (
 	"encoding/json"
+	"errors"
 )
 
 type Message struct {
@@ -72,6 +73,10 @@ func (e *SnapshotEntry) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
+	if len(entry) < 2 {
+		return errors.New("Snapshot entry must contain a price and a size")
+	}
+
 	e.Price = entry[0]
 	e.Size = entry[1]
 
@@ -83,6 +88,10 @@ func (e *SnapshotChange) UnmarshalJSON(data []byte) error {
 
 	if err := json.Unmarshal(data, &entry); err != nil {
 		return err
+	}
+
+	if len(entry) < 3 {
+		return errors.New("Snapshot change must contain a side, a price and a size")
 	}
 
 	e.Side = entry[0]
