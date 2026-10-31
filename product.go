@@ -95,6 +95,10 @@ func (e *BookEntry) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
+	if len(entry) < 3 {
+		return errors.New("Book entry must contain at least 3 columns")
+	}
+
 	priceString, ok := entry[0].(string)
 	if !ok {
 		return errors.New("Expected string")
